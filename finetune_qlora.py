@@ -1,18 +1,3 @@
-# BiharOne — QLoRA instruction fine-tuning for Llama 3 8B
-#
-# What this does: loads Llama 3 8B in 4-bit, attaches LoRA adapters, trains on
-# our multilingual service dialogues (JSONL chat format), exports to GGUF for Ollama.
-#
-# Hardware: one GPU with >=8GB VRAM (e.g. T4/3060). Runs on Google Colab free tier.
-#
-# Install (run once, in the terminal, not here):
-#   pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
-#   pip install --no-deps trl peft accelerate bitsandbytes datasets
-#
-# NOTE: Unsloth/TRL APIs change often. If an argument errors, check the current
-# Unsloth notebook at https://github.com/unslothai/unsloth — the structure below
-# (load 4-bit -> add LoRA -> format -> train -> export) stays the same.
-
 from unsloth import FastLanguageModel
 from datasets import load_dataset
 from trl import SFTTrainer
@@ -101,9 +86,3 @@ print(tokenizer.batch_decode(out)[0])
 
 # Export to GGUF for Ollama
 model.save_pretrained_gguf(OUTPUT_GGUF, tokenizer, quantization_method="q4_k_m")
-
-# Then in the terminal, create a Modelfile pointing at the .gguf:
-#   FROM ./biharone_gguf/unsloth.Q4_K_M.gguf
-# and run:
-#   ollama create biharone -f Modelfile
-#   ollama run biharone
